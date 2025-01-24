@@ -81,13 +81,155 @@ Output:
 
 """
 
+option_prompt1 = """
+Analyze the input text and perform the following tasks:
+1. Extract the locations mentioned in the input text and list them in a 1D array in the order they appear in the journey. Do not modify the names of the locations. cur_loc if not specified.
+2. Determine if the user’s input is ambiguous and requires external options (e.g., for vague terms like 'Chinese restaurant', 'flower shop', etc.).
+3. If ambiguity exists, output: "Ambiguous: Needs options."
+   If no ambiguity exists, output: "Direct: No options needed."
+
+Examples:
+
+Example 1:
+Input: "I'm currently at Union Station Toronto but I need to reach Yorkdale Mall before I go to my class at York University Block A."
+Output: 
+1D Array: [Union Station Toronto, Yorkdale Mall, York University Block A]
+Ambiguity: Direct: No options needed
+Explanation: All locations specified.
+
+Example 2:
+Input: "I start at home, visit the park, and then go to the library."
+Output:
+1D Array: [home, park, library]
+Ambiguity: Ambiguous: Needs options
+Explanation: Which park? Which Library? Unclear exactly where to go.
+
+Example 3:
+Input: "I want to go to a Chinese restaurant, then to Union Station."
+Output:
+1D Array: [cur_loc, Chinese restaurant, Union Station]
+Ambiguity: Ambiguous: Needs options
+Explanation: Which Chinese Restaurant? Unclear exactly where to go.
+
+Example 4:
+Input: "I want to go to Union Station."
+Output:
+1D Array: [cur_loc, Union Station]
+Ambiguity: Direct: No options needed
+Explanation: All locations specified.
+
+Now, process this input:
+Input: "I am at UTSC and I want to go to the gym, then a Chinese restaurant, and then go to Union Station."
+Output:
+"""
+
+option_prompt2 = """
+Analyze the input text and perform the following tasks:
+1. Extract the locations mentioned in the input text and list them in a 1D array in the order they appear in the journey. Do not modify the names of the locations. cur_loc if not specified.
+2. Determine if the user’s input is ambiguous and requires external options (e.g., for vague terms like 'Chinese restaurant', 'flower shop', etc.).
+3. If ambiguity exists, output: "Ambiguous: Needs options."
+   If no ambiguity exists, output: "Direct: No options needed."
+
+Examples:
+
+Example 1:
+Input: "I'm currently at Union Station Toronto but I need to reach Yorkdale Mall before I go to my class at York University Block A."
+Output: 
+1D Array: [Union Station Toronto, Yorkdale Mall, York University Block A]
+Ambiguity: Direct: No options needed
+Explanation: All locations specified.
+
+Example 2:
+Input: "I start at home, visit the park, and then go to the library."
+Output:
+1D Array: [home, park, library]
+Ambiguity: Ambiguous: Needs options
+Explanation: Which park? Which Library? Unclear exactly where to go.
+
+Example 3:
+Input: "I want to go to a Chinese restaurant, then to Union Station."
+Output:
+1D Array: [cur_loc, Chinese restaurant, Union Station]
+Ambiguity: Ambiguous: Needs options
+Explanation: Which Chinese Restaurant? Unclear exactly where to go.
+
+Example 4:
+Input: "I want to go to Union Station."
+Output:
+1D Array: [cur_loc, Union Station]
+Ambiguity: Direct: No options needed
+Explanation: All locations specified.
+
+Now, process this input:
+Input: "I want to go to the skating rink"
+Output:
+"""
+
+option_prompt3 = """
+Analyze the input text and perform the following tasks:
+1. Extract the locations mentioned in the input text and list them in a 1D array in the order they appear in the journey. Use 'cur_loc' as the starting location if not explicitly mentioned by the user.
+2. Determine if the user’s input is ambiguous and requires external options (e.g., for vague terms like 'Chinese restaurant', 'flower shop', 'skating rink', etc.) by identifying any location that does not specify an exact name or address.
+3. If ambiguity exists, output: "Ambiguous: Needs options."
+   If no ambiguity exists, output: "Direct: No options needed."
+4. Provide a clear explanation for the decision to mark the input as ambiguous or direct.
+
+Examples:
+
+Example 1:
+Input: "I'm currently at Union Station Toronto but I need to reach Yorkdale Mall before I go to my class at York University Block A."
+Output: 
+1D Array: [Union Station Toronto, Yorkdale Mall, York University Block A]
+Ambiguity: Direct: No options needed
+Explanation: All locations are clearly specified with proper names.
+
+Example 2:
+Input: "I start at home, visit the park, and then go to the library."
+Output:
+1D Array: [home, park, library]
+Ambiguity: Ambiguous: Needs options
+Explanation: 'park' and 'library' are vague and do not specify exact locations. External options are required.
+
+Example 3:
+Input: "I want to go to a Chinese restaurant, then to Union Station."
+Output:
+1D Array: [cur_loc, Chinese restaurant, Union Station]
+Ambiguity: Ambiguous: Needs options
+Explanation: 'Chinese restaurant' is vague and does not specify an exact location. External options are required for 'Chinese restaurant.'
+
+Example 4:
+Input: "I want to go to Union Station."
+Output:
+1D Array: [cur_loc, Union Station]
+Ambiguity: Direct: No options needed
+Explanation: 'Union Station' is a specific location, and no ambiguity exists.
+
+Example 5:
+Input: "I want to go to the skating rink."
+Output:
+1D Array: [cur_loc, skating rink]
+Ambiguity: Ambiguous: Needs options
+Explanation: 'skating rink' is vague and does not specify an exact location. External options are required for 'skating rink.'
+
+Example 6:
+Input: "I am at Starbucks on Main Street and want to go to Central Park."
+Output:
+1D Array: [Starbucks on Main Street, Central Park]
+Ambiguity: Direct: No options needed
+Explanation: Both locations are clearly specified.
+
+Now, process this input:
+Input: "i want to go to union station"
+Output:
+"""
+
+
 # Query the Mistral API
 chat_response = client.chat.complete(
     model=model,
     messages=[
         {
             "role": "user",
-            "content": test3,
+            "content": option_prompt3,
         },
     ]
 )
